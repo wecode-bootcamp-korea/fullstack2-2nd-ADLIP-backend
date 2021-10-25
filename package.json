@@ -4,7 +4,7 @@
   "description": "애드립(adlip)",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon --exec babel-node App.js",
+    "start": "nodemon --exec babel-node server.js",
     "test": "jest"
   },
   "repository": {
