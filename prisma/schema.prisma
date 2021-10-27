@@ -6,3 +6,283 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
+model Product {
+  id                             Int                           @id @default(autoincrement())
+  name                           String                        @db.VarChar(120)
+  prcie                          Decimal
+  summary                        String                        @db.VarChar(120)
+  mainImageUrl                   String                        @map("main_image_url") @db.VarChar(3000)
+  discountRate                   Decimal?                      @map("discount_rate")
+  isOnly                         Boolean                       @default(false) @map("is_only")
+  isNew                          Boolean                       @default(false) @map("is_new")
+  location                       String                        @db.VarChar(200)
+  isDeleted                      Boolean                       @default(false) @map("is_deleted")
+  createdAt                      DateTime                      @default(now()) @map("created_at")
+  updatedAt                      DateTime                      @default(now()) @map("updated_at")
+  deletedAt                      DateTime?                     @map("deleted_at")
+  mainCategory                   MainCategory                  @relation(fields: [mainCategoryId], references: [id])
+  mainCategoryId                 Int                           @map("main_category_id")
+  subCategory                    SubCategory                   @relation(fields: [subCategoryId], references: [id])
+  subCategoryId                  Int                           @map("sub_category_id")
+  limitedPeriodDiscountProduct   LimitedPeriodDiscountProduct? @relation(fields: [limitedPeriodDiscountProductId], references: [id])
+  limitedPeriodDiscountProductId Int?                          @map("limited_period_discount_product_id")
+  monthlyThemeProduct            MonthlyThemeProduct?          @relation(fields: [monthlyThemeProductId], references: [id])
+  monthlyThemeProductId          Int?                          @map("monthly_theme_product_id")
+  host                           Host                          @relation(fields: [hostId], references: [id])
+  hostId                         Int                           @map("host_id")
+  upperRegion                    UpperRegion                   @relation(fields: [upperRegionId], references: [id])
+  upperRegionId                  Int                           @map("upper_region_id")
+  lowerRegion                    LowerRegion                   @relation(fields: [lowerRegionId], references: [id])
+  lowerRegionId                  Int                           @map("lower_region_id")
+  schedule                       Schedule                      @relation(fields: [scheduleId], references: [id])
+  scheduleId                     Int                           @map("schedule_id")
+  participnatType                ParticipantType               @relation(fields: [participantTypeId], references: [id])
+  participantTypeId              Int                           @map("participant_type_id")
+
+  ProductDetail ProductDetail[]
+  ProductOption ProductOption[]
+  ProductOrder  ProductOrder[]
+  Enquery       Enquery[]
+  LikeProduct   LikeProduct[]
+  @@map("products")
+}
+
+model ProductDetail {
+  id                       Int      @id @default(autoincrement())
+  placeOfProgressLatitude  Decimal  @map("place_of_progress_latitude")
+  placeOfProgressLongitude Decimal  @map("place_of_progress_longitude")
+  palceOfProgress          String   @map("place_of_progress") @db.VarChar(200)
+  gatheringPlaceLatitude   Decimal? @map("gathering_place_latitude")
+  gatheringPlcaeLongitude  Decimal? @map("gathering_place_longitude")
+  gatheringPlace           String?  @map("gathering_place") @db.VarChar(200)
+  expiredDay               Int      @map("expired_day")
+  introduction             String   @db.VarChar(2000)
+  product                  Product  @relation(fields: [productId], references: [id])
+  productId                Int      @map("product_id")
+
+  @@map("product_details")
+}
+
+model ProductOption {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(200)
+  price     Decimal
+  startAt   DateTime @map("start_at")
+  amount    Int
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int      @map("product_id")
+
+  @@map("product_options")
+}
+
+model MainCategory {
+  id                   Int    @id @default(autoincrement())
+  mainCategoryName     String @map("main_category_name") @db.VarChar(20)
+  mainCategoryImageUrl String @map("main_category_image_url") @db.VarChar(2000)
+
+  Product     Product[]
+  SubCategory SubCategory[]
+  @@map("main_categories")
+}
+
+model SubCategory {
+  id              Int          @id @default(autoincrement())
+  subCategoryName String       @map("sub_category_name") @db.VarChar(20)
+  mainCategory    MainCategory @relation(fields: [mainCategoryId], references: [id])
+  mainCategoryId  Int          @map("main_category_id")
+
+  Product Product[]
+  @@map("sub_categories")
+}
+
+model UpperRegion {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(100)
+
+  Product     Product[]
+  LowerRegion LowerRegion[]
+  @@map("upper_regions")
+}
+
+model LowerRegion {
+  id            Int         @id @default(autoincrement())
+  name          String      @db.VarChar(100)
+  upperRegion   UpperRegion @relation(fields: [upperRegionId], references: [id])
+  upperRegionId Int         @map("upper_region_id")
+
+  Product Product[]
+  @@map("lower_regions")
+}
+
+model Schedule {
+  id       Int      @id @default(autoincrement())
+  startAt  DateTime @map("start_at")
+  finishAt DateTime @map("finish_at")
+
+  Product Product[]
+  @@map("schedules")
+}
+
+model ParticipantType {
+  id   Int    @id @default(autoincrement())
+  name String @db.VarChar(100)
+
+  Product Product[]
+  @@map("participant_types")
+}
+
+model MonthlyThemeProduct {
+  id Int @id @default(autoincrement())
+
+  Product Product[]
+  @@map("monthly_theme_products")
+}
+
+model LimitedPeriodDiscountProduct {
+  id                 Int      @id @default(autoincrement())
+  periodDiscountRate Decimal  @map("period_discount_rate")
+  startAt            DateTime @map("start_at")
+  finishAt           DateTime @map("finish_at")
+
+  Product Product[]
+  @@map("limited_period_discount_products")
+}
+
+model Order {
+  id        Int       @id @default(autoincrement())
+  isDeleted Boolean   @default(false) @map("is_deleted")
+  createdAt DateTime  @map("created_at")
+  deletedAt DateTime? @map("deleted_at")
+  user      User      @relation(fields: [userId], references: [id])
+  userId    Int       @map("user_id")
+
+  ProductOrder ProductOrder[]
+  Comment      Comment[]
+  @@map("orders")
+}
+
+model ProductOrder {
+  id        Int     @id @default(autoincrement())
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   Int     @map("order_id")
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int     @map("product_id")
+
+  @@map("products_orders")
+}
+
+model Comment {
+  id          Int       @id @default(autoincrement())
+  rating      Int
+  commentText String    @map("comment_text") @db.VarChar(2000)
+  isDeleted   Boolean   @default(false) @map("is_deleted")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @map("updated_at")
+  deletedAt   DateTime? @map("deleted_at")
+  order       Order     @relation(fields: [orderId], references: [id])
+  orderId     Int       @map("order_id")
+  reply       Comment   @relation("CommentToComment", fields: [commentId], references: [id])
+  parentId    Int?      @map("parent_id")
+
+  LikeComment LikeComment[]
+  Comment     Comment[]     @relation("CommentToComment")
+  commentId   Int
+  @@map("comments")
+}
+
+model CommentImage {
+  id              Int    @id @default(autoincrement())
+  commentImageUrl String @map("comment_image_url") @db.VarChar(2000)
+  commnetId       Int    @map("comment_id")
+
+  @@map("comment_iamges")
+}
+
+model Enquery {
+  id         Int      @id @default(autoincrement())
+  enqueyText String   @map("enquery_text") @db.VarChar(2000)
+  isPrivate  Boolean  @default(false) @map("is_private")
+  isDeleted  Boolean  @default(false) @map("is_deleted")
+  createdAt  DateTime @default(now()) @map("created_at")
+  deletedAt  DateTime @map("deleted_at")
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  Int      @map("product_id")
+  user       User     @relation(fields: [userId], references: [id])
+  userId     Int      @map("user_id")
+  reply      Enquery  @relation("EnqueryToEnquery", fields: [enqueryId], references: [id])
+  parentId   Int      @map("parent_id")
+
+  Enquery   Enquery[] @relation("EnqueryToEnquery")
+  enqueryId Int
+  @@map("enqueries")
+}
+
+model LikeProduct {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int      @map("user_id")
+  product   Product  @relation(fields: [productId], references: [id])
+  productId Int      @map("product_id")
+
+  @@map("likes_products")
+}
+
+model LikeHost {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int      @map("user_id")
+  host      Host     @relation(fields: [hostId], references: [id])
+  hostId    Int      @map("host_id")
+
+  @@map("likes_hosts")
+}
+
+model LikeComment {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int      @map("user_id")
+  comment   Comment  @relation(fields: [commentId], references: [id])
+  commentId Int      @map("comment_id")
+
+  @@map("likes_comments")
+}
+
+model Host {
+  id        Int       @id @default(autoincrement())
+  account   String    @db.VarChar(200)
+  isDeleted Boolean   @default(false) @map("is_deleted")
+  createdAt DateTime  @default(now()) @map("created_at")
+  deletedAt DateTime? @map("deleted_at")
+  user      User      @relation(fields: [userId], references: [id])
+  userId    Int       @map("user_id")
+
+  Product  Product[]
+  LikeHost LikeHost[]
+  @@map("hosts")
+}
+
+model User {
+  id              Int       @id @default(autoincrement())
+  email           String    @db.VarChar(100)
+  password        String    @db.VarChar(100)
+  nickname        String    @db.VarChar(100)
+  status          String    @db.VarChar(20)
+  profileImageUrl String?   @map("profile_image_url") @db.VarChar(2000)
+  socialPlatform  String    @map("social_platform") @db.VarChar(100)
+  isDeleted       Boolean   @default(false) @map("is_deleted")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  deletedAt       DateTime? @map("deleted_at")
+  updatedAt       DateTime  @default(now()) @map("updated_at")
+
+  Order       Order[]
+  Enquery     Enquery[]
+  LikeProduct LikeProduct[]
+  LikeHost    LikeHost[]
+  LikeComment LikeComment[]
+  Host        Host[]
+  @@map("users")
+}
