@@ -21,7 +21,7 @@ model Product {
   finishAt                       DateTime                      @map("finish_at")
   isDeleted                      Boolean                       @default(false) @map("is_deleted")
   createdAt                      DateTime                      @default(now()) @map("created_at")
-  updatedAt                      DateTime                      @default(now()) @map("updated_at")
+  updatedAt                      DateTime                      @default(now()) @updatedAt @map("updated_at")
   deletedAt                      DateTime?                     @map("deleted_at")
   mainCategory                   MainCategory                  @relation(fields: [mainCategoryId], references: [id])
   mainCategoryId                 Int                           @map("main_category_id")
@@ -68,7 +68,7 @@ model ProductOption {
   id        Int      @id @default(autoincrement())
   name      String   @db.VarChar(200)
   price     Decimal
-  startAt   DateTime @map("start_at")
+  startAt   DateTime @map("start_at") @db.Time
   amount    Int
   product   Product  @relation(fields: [productId], references: [id])
   productId Int      @map("product_id")
@@ -143,7 +143,7 @@ model LimitedPeriodDiscountProduct {
 model Order {
   id        Int       @id @default(autoincrement())
   isDeleted Boolean   @default(false) @map("is_deleted")
-  createdAt DateTime  @map("created_at")
+  createdAt DateTime  @default(now()) @map("created_at")
   deletedAt DateTime? @map("deleted_at")
   user      User      @relation(fields: [userId], references: [id])
   userId    Int       @map("user_id")
@@ -169,16 +169,16 @@ model Comment {
   commentText String    @map("comment_text") @db.VarChar(2000)
   isDeleted   Boolean   @default(false) @map("is_deleted")
   createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @default(now()) @map("updated_at")
+  updatedAt   DateTime  @default(now()) @updatedAt @map("updated_at")
   deletedAt   DateTime? @map("deleted_at")
   order       Order     @relation(fields: [orderId], references: [id])
   orderId     Int       @map("order_id")
-  reply       Comment   @relation("CommentToComment", fields: [commentId], references: [id])
-  parentId    Int?      @map("parent_id")
+  reply       Comment?  @relation("CommentToComment", fields: [parentId], references: [id])
+  parentId    Int?      @unique @map("parent_id")
 
   LikeComment LikeComment[]
-  Comment     Comment[]     @relation("CommentToComment")
-  commentId   Int
+  Comment     Comment?      @relation("CommentToComment")
+
   @@map("comments")
 }
 
@@ -187,25 +187,24 @@ model CommentImage {
   commentImageUrl String @map("comment_image_url") @db.VarChar(2000)
   commnetId       Int    @map("comment_id")
 
-  @@map("comment_iamges")
+  @@map("comment_images")
 }
 
 model Enquery {
-  id         Int      @id @default(autoincrement())
-  enqueyText String   @map("enquery_text") @db.VarChar(2000)
-  isPrivate  Boolean  @default(false) @map("is_private")
-  isDeleted  Boolean  @default(false) @map("is_deleted")
-  createdAt  DateTime @default(now()) @map("created_at")
-  deletedAt  DateTime @map("deleted_at")
-  product    Product  @relation(fields: [productId], references: [id])
-  productId  Int      @map("product_id")
-  user       User     @relation(fields: [userId], references: [id])
-  userId     Int      @map("user_id")
-  reply      Enquery  @relation("EnqueryToEnquery", fields: [enqueryId], references: [id])
-  parentId   Int      @map("parent_id")
+  id         Int       @id @default(autoincrement())
+  enqueyText String    @map("enquery_text") @db.VarChar(2000)
+  isPrivate  Boolean   @default(false) @map("is_private")
+  isDeleted  Boolean   @default(false) @map("is_deleted")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  deletedAt  DateTime? @map("deleted_at")
+  product    Product   @relation(fields: [productId], references: [id])
+  productId  Int       @map("product_id")
+  user       User      @relation(fields: [userId], references: [id])
+  userId     Int       @map("user_id")
+  reply      Enquery?  @relation("EnqueryToEnquery", fields: [parentId], references: [id])
+  parentId   Int?      @unique @map("parent_id")
 
-  Enquery   Enquery[] @relation("EnqueryToEnquery")
-  enqueryId Int
+  Enquery Enquery? @relation("EnqueryToEnquery")
   @@map("enqueries")
 }
 
@@ -267,7 +266,7 @@ model User {
   isDeleted       Boolean   @default(false) @map("is_deleted")
   createdAt       DateTime  @default(now()) @map("created_at")
   deletedAt       DateTime? @map("deleted_at")
-  updatedAt       DateTime  @default(now()) @map("updated_at")
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at")
 
   Order       Order[]
   Enquery     Enquery[]
