@@ -1,3 +1,3 @@
-import signUpDao from './signUpDao';
+import userDao from './userDao';
 
-export { signUpDao };
+export { userDao };
