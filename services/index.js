@@ -1,3 +1,3 @@
-import signUpService from './signUpService';
+import userService from './userService';
 
-export { signUpService };
+export { userService };

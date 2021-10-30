@@ -8,7 +8,7 @@ const validate = (req, res, next) => {
   return res.status(400).json({ message: errors.array()[0].msg });
 };
 
-export const validator = [
+export const signInValidator = [
   body('email')
     .exists()
     .withMessage('email 키가 없습니다')
@@ -35,6 +35,39 @@ export const validator = [
       }
       return value;
     }),
+  validate,
+];
+
+export const statusAndPlatformValidator = [
+  body('status')
+    .exists()
+    .withMessage('status 키가 없습니다.')
+    .notEmpty()
+    .withMessage('일반유저 또는 호스트유저를 선택하세요.')
+    .custom(value => {
+      const isValidStatus = value === 'user' || value === 'host';
+      if (!isValidStatus) {
+        return Promise.reject('status는 host나 user이여야 합니다.');
+      }
+      return value;
+    }),
+  body('socialPlatform')
+    .exists()
+    .withMessage('socialPlatfrom 키가 없습니다.')
+    .notEmpty()
+    .withMessage('social platform을 선택하세요')
+    .custom(value => {
+      const isValidStatus = value === 'kakao' || value === 'local';
+      if (!isValidStatus) {
+        return Promise.reject('status는 kakao이여야 합니다.');
+      }
+      return value;
+    }),
+  validate,
+];
+
+export const signUpValidator = [
+  ...signInValidator,
   body('nickname')
     .exists()
     .withMessage('nickname 키가 없습니다.')
@@ -43,15 +76,6 @@ export const validator = [
     .withMessage('nickname을 입력해주세요.')
     .bail()
     .trim(),
-  body('status')
-    .exists()
-    .withMessage('status 키가 없습니다.')
-    .notEmpty()
-    .withMessage('일반유저 또는 호스트유저를 선택하세요.'),
-  body('socialPlatform')
-    .exists()
-    .withMessage('socialPlatfrom 키가 없습니다.')
-    .notEmpty()
-    .withMessage('social platform 을 선택하세요'),
+  ...statusAndPlatformValidator,
   validate,
 ];

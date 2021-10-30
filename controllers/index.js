@@ -1,3 +1,3 @@
-import signUpController from './signupController';
+import userController from './userController';
 
-export { signUpController };
+export { userController };
