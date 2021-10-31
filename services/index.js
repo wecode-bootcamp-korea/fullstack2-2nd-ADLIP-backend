@@ -1,4 +1,6 @@
-import userService from './userService';
+import categoryService from './categoryService';
+import productsService from './productsService';
 import productService from './productService';
+import userService from './userService';
 
-export { userService, productService };
+export { categoryService, productsService, productService, userService };

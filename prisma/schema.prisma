@@ -46,6 +46,7 @@ model Product {
   Enquery       Enquery[]
   LikeProduct   LikeProduct[]
   Comment       Comment[]
+
   @@index([name])
   @@map("products")
 }
@@ -86,6 +87,7 @@ model MainCategory {
 
   Product     Product[]
   SubCategory SubCategory[]
+
   @@index([mainCategoryName])
   @@map("main_categories")
 }
@@ -97,6 +99,7 @@ model SubCategory {
   mainCategoryId  Int          @map("main_category_id")
 
   Product Product[]
+
   @@index([subCategoryName])
   @@map("sub_categories")
 }
@@ -107,6 +110,7 @@ model UpperRegion {
 
   Product     Product[]
   LowerRegion LowerRegion[]
+
   @@index([name])
   @@map("upper_regions")
 }
@@ -118,6 +122,7 @@ model LowerRegion {
   upperRegionId Int         @map("upper_region_id")
 
   Product Product[]
+
   @@index([name])
   @@map("lower_regions")
 }
@@ -127,23 +132,27 @@ model ParticipantType {
   name String @db.VarChar(100)
 
   Product Product[]
+
   @@map("participant_types")
 }
 
 model MonthlyThemeProduct {
-  id Int @id @default(autoincrement())
-
+  id      Int       @id @default(autoincrement())
+  title   String    @db.VarChar(100)
   Product Product[]
+
   @@map("monthly_theme_products")
 }
 
 model LimitedPeriodDiscountProduct {
   id                 Int      @id @default(autoincrement())
+  title              String   @db.VarChar(100)
   periodDiscountRate Decimal  @map("period_discount_rate")
   startAt            DateTime @map("start_at")
   finishAt           DateTime @map("finish_at")
 
   Product Product[]
+
   @@map("limited_period_discount_products")
 }
 
@@ -157,6 +166,7 @@ model Order {
 
   ProductOrder ProductOrder[]
   Comment      Comment[]
+
   @@map("orders")
 }
 
@@ -263,6 +273,7 @@ model Host {
 
   Product  Product[]
   LikeHost LikeHost[]
+
   @@map("hosts")
 }
 
@@ -286,6 +297,7 @@ model User {
   LikeHost    LikeHost[]
   LikeComment LikeComment[]
   Host        Host[]
+
   @@index([email, password, nickname, snsId])
   @@map("users")
 }
