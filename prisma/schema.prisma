@@ -45,6 +45,7 @@ model Product {
   ProductOrder  ProductOrder[]
   Enquery       Enquery[]
   LikeProduct   LikeProduct[]
+  @@index([name])
   @@map("products")
 }
 
@@ -61,6 +62,7 @@ model ProductDetail {
   product                  Product  @relation(fields: [productId], references: [id])
   productId                Int      @unique @map("product_id")
 
+  @@index([palceOfProgress, gatheringPlace])
   @@map("product_details")
 }
 
@@ -83,6 +85,7 @@ model MainCategory {
 
   Product     Product[]
   SubCategory SubCategory[]
+  @@index([mainCategoryName])
   @@map("main_categories")
 }
 
@@ -93,6 +96,7 @@ model SubCategory {
   mainCategoryId  Int          @map("main_category_id")
 
   Product Product[]
+  @@index([subCategoryName])
   @@map("sub_categories")
 }
 
@@ -102,6 +106,7 @@ model UpperRegion {
 
   Product     Product[]
   LowerRegion LowerRegion[]
+  @@index([name])
   @@map("upper_regions")
 }
 
@@ -112,6 +117,7 @@ model LowerRegion {
   upperRegionId Int         @map("upper_region_id")
 
   Product Product[]
+  @@index([name])
   @@map("lower_regions")
 }
 
@@ -257,12 +263,13 @@ model Host {
 
 model User {
   id              Int       @id @default(autoincrement())
-  email           String    @db.VarChar(100)
+  email           String    @unique @db.VarChar(100)
   password        String    @db.VarChar(100)
   nickname        String    @db.VarChar(100)
   status          String    @db.VarChar(20)
   profileImageUrl String?   @map("profile_image_url") @db.VarChar(2000)
-  socialPlatform  String    @map("social_platform") @db.VarChar(100)
+  socialPlatform  String    @default("local") @map("social_platform") @db.VarChar(100)
+  snsId           String?   @map("sns_id") @db.VarChar(100)
   isDeleted       Boolean   @default(false) @map("is_deleted")
   createdAt       DateTime  @default(now()) @map("created_at")
   deletedAt       DateTime? @map("deleted_at")
@@ -274,5 +281,6 @@ model User {
   LikeHost    LikeHost[]
   LikeComment LikeComment[]
   Host        Host[]
+  @@index([email, password, nickname, snsId])
   @@map("users")
 }
