@@ -208,7 +208,7 @@ model Enquery {
   user       User      @relation(fields: [userId], references: [id])
   userId     Int       @map("user_id")
   reply      Enquery?  @relation("EnqueryToEnquery", fields: [replyId], references: [id])
-  replyId    Int       @map("reply_id")
+  replyId    Int?      @map("reply_id")
 
   Enquery Enquery[] @relation("EnqueryToEnquery")
   @@map("enqueries")
