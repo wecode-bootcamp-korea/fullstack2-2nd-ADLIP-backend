@@ -2,13 +2,15 @@
 CREATE TABLE `products` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(120) NOT NULL,
-    `prcie` DECIMAL(65, 30) NOT NULL,
+    `price` DECIMAL(65, 30) NOT NULL,
     `summary` VARCHAR(120) NOT NULL,
     `main_image_url` VARCHAR(3000) NOT NULL,
     `discount_rate` DECIMAL(65, 30) NULL,
     `is_only` BOOLEAN NOT NULL DEFAULT false,
     `is_new` BOOLEAN NOT NULL DEFAULT false,
     `location` VARCHAR(200) NOT NULL,
+    `start_at` DATETIME(3) NOT NULL,
+    `finish_at` DATETIME(3) NOT NULL,
     `is_deleted` BOOLEAN NOT NULL DEFAULT false,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -19,10 +21,10 @@ CREATE TABLE `products` (
     `monthly_theme_product_id` INTEGER NULL,
     `host_id` INTEGER NOT NULL,
     `upper_region_id` INTEGER NOT NULL,
-    `lower_region_id` INTEGER NOT NULL,
-    `schedule_id` INTEGER NOT NULL,
+    `lower_region_id` INTEGER NULL,
     `participant_type_id` INTEGER NOT NULL,
 
+    INDEX `products_name_idx`(`name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -39,6 +41,8 @@ CREATE TABLE `product_details` (
     `introduction` VARCHAR(2000) NOT NULL,
     `product_id` INTEGER NOT NULL,
 
+    UNIQUE INDEX `product_details_product_id_key`(`product_id`),
+    INDEX `product_details_place_of_progress_gathering_place_idx`(`place_of_progress`, `gathering_place`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -47,7 +51,7 @@ CREATE TABLE `product_options` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(200) NOT NULL,
     `price` DECIMAL(65, 30) NOT NULL,
-    `start_at` DATETIME(3) NOT NULL,
+    `start_at` TIME NOT NULL,
     `amount` INTEGER NOT NULL,
     `product_id` INTEGER NOT NULL,
 
@@ -60,6 +64,7 @@ CREATE TABLE `main_categories` (
     `main_category_name` VARCHAR(20) NOT NULL,
     `main_category_image_url` VARCHAR(2000) NOT NULL,
 
+    INDEX `main_categories_main_category_name_idx`(`main_category_name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -69,6 +74,7 @@ CREATE TABLE `sub_categories` (
     `sub_category_name` VARCHAR(20) NOT NULL,
     `main_category_id` INTEGER NOT NULL,
 
+    INDEX `sub_categories_sub_category_name_idx`(`sub_category_name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -77,6 +83,7 @@ CREATE TABLE `upper_regions` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(100) NOT NULL,
 
+    INDEX `upper_regions_name_idx`(`name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -86,15 +93,7 @@ CREATE TABLE `lower_regions` (
     `name` VARCHAR(100) NOT NULL,
     `upper_region_id` INTEGER NOT NULL,
 
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `schedules` (
-    `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `start_at` DATETIME(3) NOT NULL,
-    `finish_at` DATETIME(3) NOT NULL,
-
+    INDEX `lower_regions_name_idx`(`name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -127,7 +126,7 @@ CREATE TABLE `limited_period_discount_products` (
 CREATE TABLE `orders` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `is_deleted` BOOLEAN NOT NULL DEFAULT false,
-    `created_at` DATETIME(3) NOT NULL,
+    `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `deleted_at` DATETIME(3) NULL,
     `user_id` INTEGER NOT NULL,
 
@@ -146,21 +145,20 @@ CREATE TABLE `products_orders` (
 -- CreateTable
 CREATE TABLE `comments` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `rating` INTEGER NOT NULL,
+    `rating` INTEGER NULL,
     `comment_text` VARCHAR(2000) NOT NULL,
     `is_deleted` BOOLEAN NOT NULL DEFAULT false,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `deleted_at` DATETIME(3) NULL,
     `order_id` INTEGER NOT NULL,
-    `parent_id` INTEGER NULL,
-    `commentId` INTEGER NOT NULL,
+    `reply_id` INTEGER NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `comment_iamges` (
+CREATE TABLE `comment_images` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
     `comment_image_url` VARCHAR(2000) NOT NULL,
     `comment_id` INTEGER NOT NULL,
@@ -175,11 +173,10 @@ CREATE TABLE `enqueries` (
     `is_private` BOOLEAN NOT NULL DEFAULT false,
     `is_deleted` BOOLEAN NOT NULL DEFAULT false,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `deleted_at` DATETIME(3) NOT NULL,
+    `deleted_at` DATETIME(3) NULL,
     `product_id` INTEGER NOT NULL,
     `user_id` INTEGER NOT NULL,
-    `parent_id` INTEGER NOT NULL,
-    `enqueryId` INTEGER NOT NULL,
+    `reply_id` INTEGER NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -234,12 +231,15 @@ CREATE TABLE `users` (
     `nickname` VARCHAR(100) NOT NULL,
     `status` VARCHAR(20) NOT NULL,
     `profile_image_url` VARCHAR(2000) NULL,
-    `social_platform` VARCHAR(100) NOT NULL,
+    `social_platform` VARCHAR(100) NOT NULL DEFAULT 'local',
+    `sns_id` VARCHAR(100) NULL,
     `is_deleted` BOOLEAN NOT NULL DEFAULT false,
     `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `deleted_at` DATETIME(3) NULL,
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
+    UNIQUE INDEX `users_email_key`(`email`),
+    INDEX `users_email_password_nickname_sns_id_idx`(`email`, `password`, `nickname`, `sns_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -262,10 +262,7 @@ ALTER TABLE `products` ADD CONSTRAINT `products_host_id_fkey` FOREIGN KEY (`host
 ALTER TABLE `products` ADD CONSTRAINT `products_upper_region_id_fkey` FOREIGN KEY (`upper_region_id`) REFERENCES `upper_regions`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `products` ADD CONSTRAINT `products_lower_region_id_fkey` FOREIGN KEY (`lower_region_id`) REFERENCES `lower_regions`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `products` ADD CONSTRAINT `products_schedule_id_fkey` FOREIGN KEY (`schedule_id`) REFERENCES `schedules`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `products` ADD CONSTRAINT `products_lower_region_id_fkey` FOREIGN KEY (`lower_region_id`) REFERENCES `lower_regions`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `products` ADD CONSTRAINT `products_participant_type_id_fkey` FOREIGN KEY (`participant_type_id`) REFERENCES `participant_types`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -295,7 +292,7 @@ ALTER TABLE `products_orders` ADD CONSTRAINT `products_orders_product_id_fkey` F
 ALTER TABLE `comments` ADD CONSTRAINT `comments_order_id_fkey` FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `comments` ADD CONSTRAINT `comments_commentId_fkey` FOREIGN KEY (`commentId`) REFERENCES `comments`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `comments` ADD CONSTRAINT `comments_reply_id_fkey` FOREIGN KEY (`reply_id`) REFERENCES `comments`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `enqueries` ADD CONSTRAINT `enqueries_product_id_fkey` FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -304,7 +301,7 @@ ALTER TABLE `enqueries` ADD CONSTRAINT `enqueries_product_id_fkey` FOREIGN KEY (
 ALTER TABLE `enqueries` ADD CONSTRAINT `enqueries_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `enqueries` ADD CONSTRAINT `enqueries_enqueryId_fkey` FOREIGN KEY (`enqueryId`) REFERENCES `enqueries`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `enqueries` ADD CONSTRAINT `enqueries_reply_id_fkey` FOREIGN KEY (`reply_id`) REFERENCES `enqueries`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `likes_products` ADD CONSTRAINT `likes_products_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
