@@ -185,13 +185,15 @@ model Comment {
   LikeComment LikeComment[]
   Comment     Comment[]     @relation("CommentToComment")
 
+  CommentImage CommentImage[]
   @@map("comments")
 }
 
 model CommentImage {
-  id              Int    @id @default(autoincrement())
-  commentImageUrl String @map("comment_image_url") @db.VarChar(2000)
-  commnetId       Int    @map("comment_id")
+  id              Int     @id @default(autoincrement())
+  commentImageUrl String  @map("comment_image_url") @db.VarChar(2000)
+  commentImage    Comment @relation(fields: [commentId], references: [id])
+  commentId       Int     @map("comment_id")
 
   @@map("comment_images")
 }
