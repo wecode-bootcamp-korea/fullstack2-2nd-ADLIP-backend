@@ -32,12 +32,10 @@ import {
 
 beforeEach(async () => {
   await prisma.user.deleteMany();
-  jest.clearAllMocks();
 });
 
 afterEach(async () => {
   await prisma.user.deleteMany();
-  jest.clearAllMocks();
 });
 
 describe('/user/signup : 1', () => {
