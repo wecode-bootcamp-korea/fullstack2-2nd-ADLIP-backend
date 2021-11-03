@@ -194,27 +194,6 @@ const getCommentsByIdOrderedByRatingLow = async (id, offset) => {
   return _.sum(result);
 };
 
-const refineCommentData = async (id, commentData, data) => {
-  commentData.map(el => {
-    el.nickname = el.order.user.nickname;
-    el.profileImageUrl = el.order.user.profileImageUrl;
-    el.totalLiked = el._count.LikeComment;
-    const date = new Date(el.createdAt);
-    el.createdAt = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
-    delete el.order;
-    delete el._count;
-  });
-  data.totalConutOfComment = data._count.Comment;
-  data.ratingAvg = await getRatingAverageByProductId(id);
-  delete data._count;
-};
-
-const getCommentsByIdOrderedByRatingHigh = async (id, offset) => {
-  const [result] = comment;
-  await refineCommentData(id, result.Comment, result);
-  return result;
-};
-
 const getCommentsByIdOrderedByLatest = async (id, offset) => {
   const comment = await prisma.product.findMany({
     select: {
