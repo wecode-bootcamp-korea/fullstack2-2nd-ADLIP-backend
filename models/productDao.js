@@ -80,7 +80,7 @@ const refineCommentData = async (id, commentData, data) => {
     delete el.order;
     delete el._count;
   });
-  data.totalConutOfComment = data._count.Comment;
+  data.totalCountOfComment = data._count.Comment;
   data.ratingAvg = await getRatingAverageByProductId(id);
   delete data._count;
 };
@@ -154,7 +154,7 @@ const getCommentsByIdAndSorted = async (id, offset, standards) => {
   });
   const [result] = comment;
   await refineCommentData(id, result.Comment, result);
-  return result;
+  return comment;
 };
 
 const orderBy = standards => {
