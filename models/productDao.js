@@ -66,31 +66,6 @@ const getProductById = async id => {
   return product;
 };
 
-const getTotalLikeOfHostAccepted = async id => {
-  const host = await prisma.host.findMany({
-    select: {
-      Product: {
-        select: {
-          _count: {
-            select: {
-              LikeProduct: true,
-            },
-          },
-        },
-      },
-    },
-    where: {
-      id: parseInt(id),
-    },
-  });
-  const result = host[0].Product.map(like => {
-    const likeCnt = like._count.LikeProduct;
-    return likeCnt;
-  });
-
-  return _.sum(result);
-};
-
 const refineCommentData = async (id, commentData, data) => {
   commentData.map(el => {
     el.nickname = el.order.user.nickname;
@@ -104,6 +79,22 @@ const refineCommentData = async (id, commentData, data) => {
   data.totalConutOfComment = data._count.Comment;
   data.ratingAvg = await getRatingAverageByProductId(id);
   delete data._count;
+};
+
+const getTotalLikeOfHostAccepted = async id => {
+  const host = await prisma.host.findMany({
+    select: {
+      Product: {
+        select: {
+          _count: {
+            select: {
+              LikeProduct: true,
+            },
+          },
+        },
+      },
+    },
+  });
 };
 
 const getCommentsByIdOrderedByRatingHigh = async (id, offset) => {
@@ -153,6 +144,175 @@ const getCommentsByIdOrderedByRatingHigh = async (id, offset) => {
   return result;
 };
 
+const getCommentsByIdOrderedByRatingLow = async (id, offset) => {
+  const comment = await prisma.product.findMany({
+    select: {
+      _count: {
+        select: {
+          Comment: true,
+        },
+      },
+      Comment: {
+        take: 10,
+        skip: parseInt(offset),
+        select: {
+          id: true,
+          productId: true,
+          rating: true,
+          commentText: true,
+          createdAt: true,
+          reply: true,
+          CommentImage: true,
+          order: {
+            select: {
+              user: {
+                select: {
+                  nickname: true,
+                  profileImageUrl: true,
+                },
+              },
+            },
+          },
+          _count: {
+            select: {
+              LikeComment: true,
+            },
+          },
+        },
+        orderBy: { rating: 'asc' },
+      },
+    },
+    where: {
+      id: parseInt(id),
+    },
+  });
+  const result = host[0].Product.map(like => {
+    const likeCnt = like._count.LikeProduct;
+    return likeCnt;
+  });
+
+  return _.sum(result);
+};
+
+const refineCommentData = async (id, commentData, data) => {
+  commentData.map(el => {
+    el.nickname = el.order.user.nickname;
+    el.profileImageUrl = el.order.user.profileImageUrl;
+    el.totalLiked = el._count.LikeComment;
+    const date = new Date(el.createdAt);
+    el.createdAt = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    delete el.order;
+    delete el._count;
+  });
+  data.totalConutOfComment = data._count.Comment;
+  data.ratingAvg = await getRatingAverageByProductId(id);
+  delete data._count;
+};
+
+const getCommentsByIdOrderedByRatingHigh = async (id, offset) => {
+  const [result] = comment;
+  await refineCommentData(id, result.Comment, result);
+  return result;
+};
+
+const getCommentsByIdOrderedByLatest = async (id, offset) => {
+  const comment = await prisma.product.findMany({
+    select: {
+      _count: {
+        select: {
+          Comment: true,
+        },
+      },
+      Comment: {
+        take: 10,
+        skip: parseInt(offset),
+        select: {
+          id: true,
+          productId: true,
+          rating: true,
+          commentText: true,
+          createdAt: true,
+          reply: true,
+          CommentImage: true,
+          order: {
+            select: {
+              user: {
+                select: {
+                  nickname: true,
+                  profileImageUrl: true,
+                },
+              },
+            },
+          },
+          _count: {
+            select: {
+              LikeComment: true,
+            },
+          },
+        },
+        orderBy: { createdAt: 'desc' },
+      },
+    },
+    where: {
+      id: parseInt(id),
+    },
+  });
+  const [result] = comment;
+  await refineCommentData(id, result.Comment, result);
+  return result;
+};
+
+const getCommentsByIdOrderedByLike = async (id, offset) => {
+  const comment = await prisma.product.findMany({
+    select: {
+      _count: {
+        select: {
+          Comment: true,
+        },
+      },
+      Comment: {
+        take: 10,
+        skip: parseInt(offset),
+        select: {
+          id: true,
+          productId: true,
+          rating: true,
+          commentText: true,
+          createdAt: true,
+          reply: true,
+          CommentImage: true,
+          order: {
+            select: {
+              user: {
+                select: {
+                  nickname: true,
+                  profileImageUrl: true,
+                },
+              },
+            },
+          },
+          _count: {
+            select: {
+              LikeComment: true,
+            },
+          },
+        },
+        orderBy: {
+          LikeComment: {
+            _count: 'desc',
+          },
+        },
+      },
+    },
+    where: {
+      id: parseInt(id),
+    },
+  });
+  const [result] = comment;
+  await refineCommentData(id, result.Comment, result);
+  return result;
+};
+
 const getRatingAverageByProductId = async productId => {
   const result = await prisma.comment.aggregate({
     _avg: {
@@ -175,4 +335,7 @@ export default {
   getProductById,
   getTotalCountOfProducts,
   getCommentsByIdOrderedByRatingHigh,
+  getCommentsByIdOrderedByRatingLow,
+  getCommentsByIdOrderedByLatest,
+  getCommentsByIdOrderedByLike,
 };
