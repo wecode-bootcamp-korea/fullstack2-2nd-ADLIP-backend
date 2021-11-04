@@ -12,20 +12,6 @@ const getProductById = async id => {
 
 const getCommentsById = async (productId, query) => {
   const { orderBy, offset } = query;
-  const sorting = {
-    ratingHigh: () => {
-      return productDao.getCommentsByIdOrderedByRatingHigh(productId, offset);
-    },
-    ratingLow: () => {
-      return productDao.getCommentsByIdOrderedByRatingLow(productId, offset);
-    },
-    latest: () => {
-      return productDao.getCommentsByIdOrderedByLatest(productId, offset);
-    },
-    like: () => {
-      return productDao.getCommentsByIdOrderedByLike(productId, offset);
-    },
-  };
   if (
     orderBy !== 'ratingHigh' &&
     orderBy !== 'ratingLow' &&
@@ -39,7 +25,7 @@ const getCommentsById = async (productId, query) => {
   if (!(orderBy && offset)) {
     throw new Error('쿼리 스트링과 오프셋을 입력하세요.');
   }
-  return await sorting[orderBy]();
+  return await productDao.getCommentsByIdAndSorted(productId, offset, orderBy);
 };
 
 export default { getCommentsById, getProductById };
