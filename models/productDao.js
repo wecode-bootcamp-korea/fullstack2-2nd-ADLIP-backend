@@ -43,7 +43,7 @@ const getProductById = async id => {
     },
   });
 
-  const commentData = await getCommentsByIdAndSorted(id, 10);
+  const commentData = await getCommentsByIdAndSorted(id, 15);
   result[0].comment = commentData;
   const hostId = result[0].host.id;
   const totalLikeOfHostAccepted = await getTotalLikeOfHostAccepted(hostId);
