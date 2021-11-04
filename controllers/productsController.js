@@ -1,14 +1,14 @@
-import { productsService } from '../services';
+import { productService, productsService } from '../services';
 
 const getAllProductsList = async (req, res) => {
   try {
-    const { rating, price, createdAt, limit, offset } = req.query;
+    const { rating, price, createdAt, indexOfLast, indexOfFirst } = req.query;
     const productsByCategories = await productsService.getAllProductsList(
       rating,
       price,
       createdAt,
-      limit,
-      offset,
+      indexOfLast,
+      indexOfFirst,
     );
 
     res.status(200).json({
@@ -22,10 +22,10 @@ const getAllProductsList = async (req, res) => {
 
 const getProductDetailRelation = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { mainId, subId } = req.params;
     const { rating } = req.query;
     const getProductDetailRelation =
-      await productsService.getProductDetailRelation(id, rating);
+      await productsService.getProductDetailRelation(mainId, subId, rating);
 
     res.status(200).json({
       message: 'SUCCESS',
@@ -36,7 +36,27 @@ const getProductDetailRelation = async (req, res) => {
   }
 };
 
+const getAllProductsListByCategories = async (req, res) => {
+  try {
+    const { mainId, subId } = req.params;
+    const { rating } = req.query;
+    const getAllProductsListByCategories =
+      await productsService.getAllProductsListByCategories(
+        mainId,
+        subId,
+        rating,
+      );
+    res.status(200).json({
+      message: 'SUCCESS',
+      data: getAllProductsListByCategories,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 export default {
   getAllProductsList,
   getProductDetailRelation,
+  getAllProductsListByCategories,
 };

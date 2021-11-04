@@ -1,9 +1,15 @@
 import prisma from '../prisma';
 
-const getAllProductsList = async (rating, price, createdAt, limit, offset) => {
+const getAllProductsList = async (
+  rating,
+  price,
+  createdAt,
+  indexOfLast,
+  indexOfFirst,
+) => {
   let listPageProduct = {
-    skip: offset,
-    take: limit,
+    skip: indexOfLast,
+    take: indexOfFirst,
     select: {
       id: true,
       mainCategoryId: true,
@@ -41,12 +47,10 @@ const getAllProductsList = async (rating, price, createdAt, limit, offset) => {
   return productsByCategories;
 };
 
-const getProductDetailRelation = async (id, rating) => {
+const getProductDetailRelation = async (mainId, subId, rating) => {
   const getProductDetailRelation = await prisma.product.findMany({
-    take: 4,
     where: {
-      id: parseInt(id),
-      mainCategoryId: parseInt(id),
+      mainCategoryId: parseInt(mainId),
     },
     select: {
       id: true,
@@ -78,7 +82,54 @@ const getProductDetailRelation = async (id, rating) => {
   return getProductDetailRelation;
 };
 
+const getAllProductsListByCategories = async (mainId, subId, rating) => {
+  let listPageProduct = {
+    take: 4,
+    where: {
+      mainCategoryId: parseInt(mainId),
+      subCategoryId: parseInt(subId),
+    },
+    select: {
+      id: true,
+      mainCategoryId: true,
+      subCategoryId: true,
+      mainImageUrl: true,
+      summary: true,
+      name: true,
+      price: true,
+      discountRate: true,
+      isNew: true,
+      isOnly: true,
+      createdAt: true,
+      ProductOrder: {
+        select: {
+          order: {
+            select: {
+              Comment: {
+                select: {
+                  rating: true,
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+    // orderBy: {
+    //   price: price === undefined ? undefined : price,
+    //   createdAt: createdAt === undefined ? undefined : createdAt,
+    // },
+  };
+
+  const getAllProductsListByCategories = await prisma.product.findMany(
+    listPageProduct,
+  );
+
+  return getAllProductsListByCategories;
+};
+
 export default {
   getAllProductsList,
   getProductDetailRelation,
+  getAllProductsListByCategories,
 };

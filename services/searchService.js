@@ -5,16 +5,16 @@ const getSearchProductsList = async (
   rating,
   price,
   createdAt,
-  limit,
-  offset,
+  indexOfLast,
+  indexOfFirst,
 ) => {
   const searchProductsList = await searchDao.getSearchProductsList(
     name,
     rating,
     price,
     createdAt,
-    limit,
-    offset,
+    indexOfLast,
+    indexOfFirst,
   );
 
   if (!searchProductsList) console.log('all_products_list_404err?!');

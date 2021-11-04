@@ -47,8 +47,33 @@ const subCategoriesProducts = async (req, res) => {
   }
 };
 
+// const getAllProductsListByCategories = async (req, res) => {
+//   try {
+//     const { mainId, subId } = req.params;
+//     const { rating, price, createdAt, indexOfLast, indexOfFirst } = req.query;
+//     const getAllProductsListByCategories =
+//       await productsService.getAllProductsListByCategories(
+//         mainId,
+//         subId,
+//         rating,
+//         price,
+//         createdAt,
+//         indexOfLast,
+//         indexOfFirst,
+//       );
+
+//     res.status(200).json({
+//       message: 'SUCCESS',
+//       data: getAllProductsListByCategories,
+//     });
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
+
 export default {
   mainCategories,
   mainCategoriesProducts,
   subCategoriesProducts,
+  // getAllProductsListByCategories,
 };

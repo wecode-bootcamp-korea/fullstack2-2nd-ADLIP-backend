@@ -2,14 +2,15 @@ import { searchService } from '../services';
 
 const getSearchProductsList = async (req, res) => {
   try {
-    const { name, rating, price, createdAt, limit, offset } = req.query;
+    const { name, rating, price, createdAt, indexOfLast, indexOfFirst } =
+      req.query;
     const searchProductsList = await searchService.getSearchProductsList(
       name,
       rating,
       price,
       createdAt,
-      limit,
-      offset,
+      indexOfLast,
+      indexOfFirst,
     );
 
     res.status(200).json({
