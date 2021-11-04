@@ -54,12 +54,11 @@ const signInKakao = async (userInfo, body) => {
       socialPlatform,
       status,
     });
+    return createJwtToken(email, status);
   }
   if (isExistUser.socialPlatform !== 'kakao') {
     throw new Error('이미 존재하는 아이디입니다.');
   }
-
-  return createJwtToken(isExistUser.email, isExistUser.status);
 };
 
 export default { createUser, signInUser, signInKakao };
