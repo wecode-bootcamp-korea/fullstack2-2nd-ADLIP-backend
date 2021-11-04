@@ -12,8 +12,24 @@ const getAllProductsList = async (req, res) => {
     );
 
     res.status(200).json({
-      message: 'GET_PRODUCTS',
+      message: 'SUCCESS',
       data: productsByCategories,
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const getProductDetailRelation = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { rating } = req.query;
+    const getProductDetailRelation =
+      await productsService.getProductDetailRelation(id, rating);
+
+    res.status(200).json({
+      message: 'SUCCESS',
+      data: getProductDetailRelation,
     });
   } catch (err) {
     console.log(err);
@@ -22,4 +38,5 @@ const getAllProductsList = async (req, res) => {
 
 export default {
   getAllProductsList,
+  getProductDetailRelation,
 };
