@@ -3,6 +3,7 @@ import categoryService from './categoryService';
 import productService from './productService';
 import productsService from './productsService';
 import userService from './userService';
+import searchService from './searchService';
 
 export {
   categoryService,
@@ -10,4 +11,5 @@ export {
   productService,
   userService,
   mainService,
+  searchService,
 };

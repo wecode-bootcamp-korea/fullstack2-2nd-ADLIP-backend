@@ -3,6 +3,7 @@ import userController from './userController';
 import productController from './productController';
 import productsController from './productsController';
 import mainController from './mainController';
+import searchController from './searchController';
 
 export {
   categoryController,
@@ -10,4 +11,5 @@ export {
   productController,
   productsController,
   userController,
+  searchController,
 };
