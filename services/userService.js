@@ -17,10 +17,10 @@ const createUser = async userInfo => {
   if (isExistUser) {
     return new Error('이미 존재하는 유저입니다.');
   }
-
+  const { BCRYPT_SALT_ROUNDS } = process.env;
   userInfo.password = await bcrypt.hash(
     userInfo.password,
-    process.env(BCRYPT_SALT_ROUNDS),
+    parseInt(BCRYPT_SALT_ROUNDS),
   );
   await userDao.createUser(userInfo);
   return { message: 'CREATED' };
