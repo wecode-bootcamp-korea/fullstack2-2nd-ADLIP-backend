@@ -152,6 +152,7 @@ CREATE TABLE `comments` (
     `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     `deleted_at` DATETIME(3) NULL,
     `order_id` INTEGER NOT NULL,
+    `product_id` INTEGER NOT NULL,
     `reply_id` INTEGER NULL,
 
     PRIMARY KEY (`id`)
@@ -176,7 +177,7 @@ CREATE TABLE `enqueries` (
     `deleted_at` DATETIME(3) NULL,
     `product_id` INTEGER NOT NULL,
     `user_id` INTEGER NOT NULL,
-    `reply_id` INTEGER NOT NULL,
+    `reply_id` INTEGER NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -292,7 +293,13 @@ ALTER TABLE `products_orders` ADD CONSTRAINT `products_orders_product_id_fkey` F
 ALTER TABLE `comments` ADD CONSTRAINT `comments_order_id_fkey` FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE `comments` ADD CONSTRAINT `comments_product_id_fkey` FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE `comments` ADD CONSTRAINT `comments_reply_id_fkey` FOREIGN KEY (`reply_id`) REFERENCES `comments`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `comment_images` ADD CONSTRAINT `comment_images_comment_id_fkey` FOREIGN KEY (`comment_id`) REFERENCES `comments`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `enqueries` ADD CONSTRAINT `enqueries_product_id_fkey` FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -301,7 +308,7 @@ ALTER TABLE `enqueries` ADD CONSTRAINT `enqueries_product_id_fkey` FOREIGN KEY (
 ALTER TABLE `enqueries` ADD CONSTRAINT `enqueries_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `enqueries` ADD CONSTRAINT `enqueries_reply_id_fkey` FOREIGN KEY (`reply_id`) REFERENCES `enqueries`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE `enqueries` ADD CONSTRAINT `enqueries_reply_id_fkey` FOREIGN KEY (`reply_id`) REFERENCES `enqueries`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `likes_products` ADD CONSTRAINT `likes_products_user_id_fkey` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
