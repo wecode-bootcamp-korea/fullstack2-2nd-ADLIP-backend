@@ -131,14 +131,16 @@ model ParticipantType {
 }
 
 model MonthlyThemeProduct {
-  id Int @id @default(autoincrement())
-
+  id      Int       @id @default(autoincrement())
+  title   String    @db.VarChar(100)
   Product Product[]
+
   @@map("monthly_theme_products")
 }
 
 model LimitedPeriodDiscountProduct {
   id                 Int      @id @default(autoincrement())
+  title              String   @db.VarChar(100)
   periodDiscountRate Decimal  @map("period_discount_rate")
   startAt            DateTime @map("start_at")
   finishAt           DateTime @map("finish_at")
