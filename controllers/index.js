@@ -1,3 +1,4 @@
-import signUpController from './signupController';
+import productController from './productController';
+import userController from './userController';
 
-export { signUpController };
+export { productController, userController };

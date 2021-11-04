@@ -1,3 +1,4 @@
-import signUpDao from './signUpDao';
+import userDao from './userDao';
+import productDao from './productDao';
 
-export { signUpDao };
+export { userDao, productDao };

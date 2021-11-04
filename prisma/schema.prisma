@@ -45,6 +45,8 @@ model Product {
   ProductOrder  ProductOrder[]
   Enquery       Enquery[]
   LikeProduct   LikeProduct[]
+  Comment       Comment[]
+  @@index([name])
   @@map("products")
 }
 
@@ -61,6 +63,7 @@ model ProductDetail {
   product                  Product  @relation(fields: [productId], references: [id])
   productId                Int      @unique @map("product_id")
 
+  @@index([palceOfProgress, gatheringPlace])
   @@map("product_details")
 }
 
@@ -83,6 +86,7 @@ model MainCategory {
 
   Product     Product[]
   SubCategory SubCategory[]
+  @@index([mainCategoryName])
   @@map("main_categories")
 }
 
@@ -93,6 +97,7 @@ model SubCategory {
   mainCategoryId  Int          @map("main_category_id")
 
   Product Product[]
+  @@index([subCategoryName])
   @@map("sub_categories")
 }
 
@@ -102,6 +107,7 @@ model UpperRegion {
 
   Product     Product[]
   LowerRegion LowerRegion[]
+  @@index([name])
   @@map("upper_regions")
 }
 
@@ -112,6 +118,7 @@ model LowerRegion {
   upperRegionId Int         @map("upper_region_id")
 
   Product Product[]
+  @@index([name])
   @@map("lower_regions")
 }
 
@@ -165,7 +172,7 @@ model ProductOrder {
 
 model Comment {
   id          Int       @id @default(autoincrement())
-  rating      Int
+  rating      Int?
   commentText String    @map("comment_text") @db.VarChar(2000)
   isDeleted   Boolean   @default(false) @map("is_deleted")
   createdAt   DateTime  @default(now()) @map("created_at")
@@ -173,19 +180,23 @@ model Comment {
   deletedAt   DateTime? @map("deleted_at")
   order       Order     @relation(fields: [orderId], references: [id])
   orderId     Int       @map("order_id")
-  reply       Comment?  @relation("CommentToComment", fields: [parentId], references: [id])
-  parentId    Int?      @unique @map("parent_id")
+  product     Product   @relation(fields: [productId], references: [id])
+  productId   Int       @map("product_id")
+  reply       Comment?  @relation("CommentToComment", fields: [replyId], references: [id])
+  replyId     Int?      @map("reply_id")
 
   LikeComment LikeComment[]
-  Comment     Comment?      @relation("CommentToComment")
+  Comment     Comment[]     @relation("CommentToComment")
 
+  CommentImage CommentImage[]
   @@map("comments")
 }
 
 model CommentImage {
-  id              Int    @id @default(autoincrement())
-  commentImageUrl String @map("comment_image_url") @db.VarChar(2000)
-  commnetId       Int    @map("comment_id")
+  id              Int     @id @default(autoincrement())
+  commentImageUrl String  @map("comment_image_url") @db.VarChar(2000)
+  commentImage    Comment @relation(fields: [commentId], references: [id])
+  commentId       Int     @map("comment_id")
 
   @@map("comment_images")
 }
@@ -201,10 +212,10 @@ model Enquery {
   productId  Int       @map("product_id")
   user       User      @relation(fields: [userId], references: [id])
   userId     Int       @map("user_id")
-  reply      Enquery?  @relation("EnqueryToEnquery", fields: [parentId], references: [id])
-  parentId   Int?      @unique @map("parent_id")
+  reply      Enquery?  @relation("EnqueryToEnquery", fields: [replyId], references: [id])
+  replyId    Int?      @map("reply_id")
 
-  Enquery Enquery? @relation("EnqueryToEnquery")
+  Enquery Enquery[] @relation("EnqueryToEnquery")
   @@map("enqueries")
 }
 
@@ -257,12 +268,13 @@ model Host {
 
 model User {
   id              Int       @id @default(autoincrement())
-  email           String    @db.VarChar(100)
+  email           String    @unique @db.VarChar(100)
   password        String    @db.VarChar(100)
   nickname        String    @db.VarChar(100)
   status          String    @db.VarChar(20)
   profileImageUrl String?   @map("profile_image_url") @db.VarChar(2000)
-  socialPlatform  String    @map("social_platform") @db.VarChar(100)
+  socialPlatform  String    @default("local") @map("social_platform") @db.VarChar(100)
+  snsId           String?   @map("sns_id") @db.VarChar(100)
   isDeleted       Boolean   @default(false) @map("is_deleted")
   createdAt       DateTime  @default(now()) @map("created_at")
   deletedAt       DateTime? @map("deleted_at")
@@ -274,5 +286,6 @@ model User {
   LikeHost    LikeHost[]
   LikeComment LikeComment[]
   Host        Host[]
+  @@index([email, password, nickname, snsId])
   @@map("users")
 }

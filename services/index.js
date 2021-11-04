@@ -1,3 +1,4 @@
-import signUpService from './signUpService';
+import userService from './userService';
+import productService from './productService';
 
-export { signUpService };
+export { userService, productService };
