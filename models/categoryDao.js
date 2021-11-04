@@ -40,9 +40,9 @@ const mainCategoriesProducts = async (mainId, rating) => {
                 select: {
                   rating: true,
                 },
-                orderBy: {
-                  rating: 'desc',
-                },
+                // orderBy: {
+                //   rating: 'desc',
+                // },
               },
             },
           },
@@ -79,9 +79,9 @@ const mainCategoriesProducts = async (mainId, rating) => {
                 select: {
                   rating: true,
                 },
-                orderBy: {
-                  rating: 'desc',
-                },
+                // orderBy: {
+                //   rating: 'desc',
+                // },
               },
             },
           },
@@ -196,9 +196,9 @@ const subCategoriesProducts = async (mainId, subId, rating) => {
                 select: {
                   rating: true,
                 },
-                orderBy: {
-                  rating: 'desc',
-                },
+                // orderBy: {
+                //   rating: 'desc',
+                // },
               },
             },
           },
@@ -236,9 +236,9 @@ const subCategoriesProducts = async (mainId, subId, rating) => {
                 select: {
                   rating: true,
                 },
-                orderBy: {
-                  rating: 'desc',
-                },
+                // orderBy: {
+                //   rating: 'desc',
+                // },
               },
             },
           },
@@ -318,6 +318,7 @@ const subCategoriesProducts = async (mainId, subId, rating) => {
       },
     },
   });
+
   return [
     subCategoriesProductsByRating,
     subCategoriesProductsByNew,
@@ -326,8 +327,62 @@ const subCategoriesProducts = async (mainId, subId, rating) => {
   ];
 };
 
+// const getAllProductsListByCategories = async (
+//   mainId,
+//   rating,
+//   price,
+//   createdAt,
+//   indexOfLast,
+//   indexOfFirst,
+// ) => {
+//   let listPageProduct = {
+//     skip: indexOfLast,
+//     take: indexOfFirst,
+//     where: {
+//       mainCategoryId: parseInt(mainId),
+//     },
+//     select: {
+//       id: true,
+//       mainCategoryId: true,
+//       subCategoryId: true,
+//       mainImageUrl: true,
+//       summary: true,
+//       name: true,
+//       price: true,
+//       discountRate: true,
+//       isNew: true,
+//       isOnly: true,
+//       createdAt: true,
+//       ProductOrder: {
+//         select: {
+//           order: {
+//             select: {
+//               Comment: {
+//                 select: {
+//                   rating: true,
+//                 },
+//               },
+//             },
+//           },
+//         },
+//       },
+//     },
+//     orderBy: {
+//       price: price === undefined ? undefined : price,
+//       createdAt: createdAt === undefined ? undefined : createdAt,
+//     },
+//   };
+
+//   const getAllProductsListByCategories = await prisma.product.findMany(
+//     listPageProduct,
+//   );
+
+//   return getAllProductsListByCategories;
+// };
+
 export default {
   mainCategories,
   mainCategoriesProducts,
   subCategoriesProducts,
+  // getAllProductsListByCategories,
 };

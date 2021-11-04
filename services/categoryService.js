@@ -42,6 +42,9 @@ const mainCategoriesProducts = async (mainId, rating) => {
         return a.rating - b.rating;
       });
     }
+    // if (subId && undefined) {
+    //   return undefined;
+    // }
 
     return ratings;
   });
@@ -81,16 +84,17 @@ const subCategoriesProducts = async (mainId, subId, rating) => {
       delete ratings[i].ProductOrder;
     }
 
-    // if (rating != undefined && rating === 'asc') {
-    //   ratings = ratings.sort(function (a, b) {
-    //     return b.rating - a.rating;
-    //   });
-    // } else if (rating != undefined && rating === 'desc') {
-    //   //(rating === 'desc')
-    //   ratings = ratings.sort(function (a, b) {
-    //     return a.rating - b.rating;
-    //   });
-    // }
+    if (rating != undefined && rating === 'asc') {
+      ratings = ratings.sort(function (a, b) {
+        return b.rating - a.rating;
+      });
+    } else if (rating != undefined && rating === 'desc') {
+      //(rating === 'desc')
+      ratings = ratings.sort(function (a, b) {
+        return a.rating - b.rating;
+      });
+    }
+
     return ratings;
   });
 
@@ -102,8 +106,62 @@ const subCategoriesProducts = async (mainId, subId, rating) => {
   };
 };
 
+// const getAllProductsListByCategories = async (
+//   mainId,
+//   rating,
+//   price,
+//   createdAt,
+//   indexOfLast,
+//   indexOfFirst,
+// ) => {
+//   const getAllProductsListByCategories =
+//     await productsDao.getAllProductsListByCategories(
+//       mainId,
+//       rating,
+//       price,
+//       createdAt,
+//       indexOfLast,
+//       indexOfFirst,
+//     );
+
+//   if (!getAllProductsListByCategories)
+//     console.log('all_products_list_404err?!');
+
+//   let ratings = getAllProductsListByCategories.map(product => {
+//     product.rating = product.ProductOrder.reduce((acc, value, index) => {
+//       return (
+//         (acc * index +
+//           value.order.Comment.reduce((acc2, value2, index2) => {
+//             return (acc2 * index2 + value2.rating) / (index2 + 1);
+//           }, 0)) /
+//         (index + 1)
+//       );
+//     }, 0);
+
+//     return product;
+//   });
+
+//   for (let i = 0; i < ratings.length; i++) {
+//     delete ratings[i].ProductOrder;
+//   }
+
+//   if (rating != undefined && rating === 'asc') {
+//     ratings = ratings.sort(function (a, b) {
+//       return a.rating - b.rating;
+//     });
+//   } else {
+//     //(rating === 'desc')
+//     ratings = ratings.sort(function (a, b) {
+//       return b.rating - a.rating;
+//     });
+//   }
+
+//   return ratings;
+// };
+
 export default {
   mainCategories,
   mainCategoriesProducts,
   subCategoriesProducts,
+  // getAllProductsListByCategories,
 };

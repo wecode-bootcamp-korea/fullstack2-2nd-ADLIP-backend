@@ -5,12 +5,12 @@ const getSearchProductsList = async (
   rating,
   price,
   createdAt,
-  limit,
-  offset,
+  indexOfLast,
+  indexOfFirst,
 ) => {
   let searchProduct = {
-    skip: offset,
-    take: limit,
+    skip: indexOfLast,
+    take: indexOfFirst,
     where: {
       name: {
         contains: name,
