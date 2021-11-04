@@ -1,15 +1,15 @@
-import categoryController from './categoryController';
 import userController from './userController';
+import mainController from './mainController';
+import categoryController from './categoryController';
+import searchController from './searchController';
 import productController from './productController';
 import productsController from './productsController';
-import mainController from './mainController';
-import searchController from './searchController';
 
 export {
-  categoryController,
+  userController,
   mainController,
+  categoryController,
   productController,
   productsController,
-  userController,
   searchController,
 };
