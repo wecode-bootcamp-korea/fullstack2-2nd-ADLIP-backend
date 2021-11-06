@@ -74,7 +74,9 @@ const refineCommentData = async (id, commentData, data) => {
     el.profileImageUrl = el.order.user.profileImageUrl;
     el.totalLiked = el._count.LikeComment;
     const date = new Date(el.createdAt);
-    el.createdAt = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+    el.createdAt = `${date.getFullYear()}-${
+      date.getMonth() + 1
+    }-${date.getDate()} ${date.getHours()}:${date.getMinutes()}`;
     delete el.order;
     delete el._count;
   });
