@@ -137,8 +137,9 @@ model ParticipantType {
 }
 
 model MonthlyThemeProduct {
-  id      Int       @id @default(autoincrement())
-  title   String    @db.VarChar(100)
+  id    Int    @id @default(autoincrement())
+  title String @db.VarChar(100)
+
   Product Product[]
 
   @@map("monthly_theme_products")
