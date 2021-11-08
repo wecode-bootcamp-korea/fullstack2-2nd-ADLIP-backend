@@ -13,9 +13,9 @@ const createJwtToken = async (email, status) => {
 
 const createUser = async userInfo => {
   const { email } = userInfo;
-  const isExistUser = await userDao.findUserByEmail(email);
-  if (isExistUser) {
-    return new Error('이미 존재하는 유저입니다.');
+  const existingUser = await userDao.findUserByEmail(email);
+  if (existingUser) {
+    throw new Error('이미 존재하는 유저입니다.');
   }
   const { BCRYPT_SALT_ROUNDS } = process.env;
   userInfo.password = await bcrypt.hash(
@@ -28,16 +28,16 @@ const createUser = async userInfo => {
 
 const signInUser = async userInfo => {
   const { email } = userInfo;
-  const isExistUser = await userDao.findUserByEmail(email);
-  if (isExistUser === null) {
+  const existingUser = await userDao.findUserByEmail(email);
+  if (existingUser === null) {
     throw new Error('존재하지 않는 아이디 입니다.');
   }
-  const { password } = isExistUser;
+  const { password } = existingUser;
   const isValidUser = await bcrypt.compare(userInfo.password, password);
   if (!isValidUser) {
     throw new Error('비밀번호가 유효하지 않습니다.');
   }
-  return createJwtToken(isExistUser.email, isExistUser.status);
+  return createJwtToken(existingUser.email, existingUser.status);
 };
 
 const signInKakao = async (userInfo, body) => {
@@ -46,8 +46,8 @@ const signInKakao = async (userInfo, body) => {
     email,
     profile: { nickname },
   } = await userInfo.kakao_account;
-  const isExistUser = await userDao.findUserByEmail(email);
-  if (isExistUser === null) {
+  const existingUser = await userDao.findUserByEmail(email);
+  if (existingUser === null) {
     await userDao.createSocialUser({
       email,
       nickname,
@@ -56,10 +56,10 @@ const signInKakao = async (userInfo, body) => {
     });
     return createJwtToken(email, status);
   }
-  if (isExistUser.socialPlatform !== 'kakao') {
+  if (existingUser.socialPlatform !== 'kakao') {
     throw new Error('이미 존재하는 아이디입니다.');
   }
   return createJwtToken(email, status);
 };
 
-export default { createUser, signInUser, signInKakao };
+export default { createUser, signInUser, signInKakao, createJwtToken };

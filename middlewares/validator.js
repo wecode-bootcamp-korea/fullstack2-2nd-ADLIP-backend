@@ -53,13 +53,15 @@ export const statusAndPlatformValidator = [
     }),
   body('socialPlatform')
     .exists()
-    .withMessage('socialPlatfrom 키가 없습니다.')
+    .withMessage('social platform 키가 없습니다.')
     .notEmpty()
     .withMessage('social platform을 선택하세요')
     .custom(value => {
       const isValidStatus = value === 'kakao' || value === 'local';
       if (!isValidStatus) {
-        return Promise.reject('status는 kakao이여야 합니다.');
+        return Promise.reject(
+          'social platform은 kakao 또는 local이여야 합니다.',
+        );
       }
       return value;
     }),
