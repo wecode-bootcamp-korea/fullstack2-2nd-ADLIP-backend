@@ -15,7 +15,9 @@ const createUser = async (req, res, next) => {
 const signInUser = async (req, res, next) => {
   try {
     const token = await userService.signInUser(req.body);
-    res.status(200).json({ message: '로그인성공', token });
+    res
+      .status(200)
+      .json({ message: '로그인성공', token, socialPlatform: 'local' });
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: `${error.message}` });
@@ -34,7 +36,9 @@ const signInKakao = async (req, res, next) => {
       },
     });
     const token = await userService.signInKakao(data, req.body);
-    return res.status(200).json({ message: '카카오 로그인 성공', token });
+    return res
+      .status(200)
+      .json({ message: '카카오 로그인 성공', token, socialPlatform: 'kakao' });
   } catch (error) {
     console.log(error);
     res.status(400).json({ message: `${error.message}` });

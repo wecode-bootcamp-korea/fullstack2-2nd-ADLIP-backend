@@ -164,6 +164,7 @@ describe('/user/kakao : 1', () => {
 
     expect(200);
     expect(response.body).toHaveProperty('token');
+    expect(response.body).toHaveProperty('socialPlatform');
   });
 });
 
@@ -244,6 +245,7 @@ describe('/user/signin : 1', () => {
       .send(validSignInData);
     expect(200);
     expect(response.body).toHaveProperty('token');
+    expect(response.body).toHaveProperty('socialPlatform');
   });
 });
 
