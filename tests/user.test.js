@@ -133,6 +133,7 @@ describe('/user/signup : -1', () => {
   test('create user in local: -1 - (already existing user)', async () => {
     await prisma.user.create({
       data: {
+        id: 1,
         email: 'test002@gmail.com',
         nickname: 'test001',
         password: 'Qwer1234!@#$',
