@@ -154,7 +154,7 @@ const getCommentsByIdAndSorted = async (id, offset, standards) => {
   });
   const [result] = comment;
   await refineCommentData(id, result.Comment, result);
-  return comment;
+  return result;
 };
 
 const orderBy = standards => {
